@@ -126,13 +126,19 @@ const duplicateResult = await checkAIDuplicate(
 
 console.log("Duplicate Check:", duplicateResult);
 
-if (
-  typeof duplicateResult === "string" &&
-  duplicateResult.toLowerCase().includes('"duplicate": true') ||
-    duplicateResult.toLowerCase().includes("duplicate: true") ||
-    duplicateResult.toLowerCase().includes("yes")
+let isDuplicate = false;
 
+if (typeof duplicateResult === "string") {
+  isDuplicate = duplicateResult.toLowerCase().includes('"duplicate": true');
+} else if (
+  duplicateResult &&
+  typeof duplicateResult === "object" &&
+  "duplicate" in duplicateResult
 ) {
+  isDuplicate = Boolean((duplicateResult as any).duplicate);
+}
+
+if (isDuplicate) {
   const proceed = window.confirm(
     "⚠️ AI detected a similar report already exists.\n\nDo you still want to submit?"
   );
